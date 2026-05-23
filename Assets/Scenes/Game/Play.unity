@@ -509,7 +509,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -2496,7 +2496,7 @@ GameObject:
   - component: {fileID: 653630887}
   - component: {fileID: 653630889}
   - component: {fileID: 653630888}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2636,7 +2636,7 @@ GameObject:
   - component: {fileID: 706991543}
   - component: {fileID: 706991545}
   - component: {fileID: 706991544}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2766,7 +2766,7 @@ GameObject:
   - component: {fileID: 726832905}
   - component: {fileID: 726832907}
   - component: {fileID: 726832906}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -3900,7 +3900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3172158427039837314, guid: edc9b49a642ce8d408de06ec9e091170, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -231.99
+      value: -237.8
       objectReference: {fileID: 0}
     - target: {fileID: 3172158427039837314, guid: edc9b49a642ce8d408de06ec9e091170, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5872,7 +5872,7 @@ GameObject:
   - component: {fileID: 1489990835}
   - component: {fileID: 1489990837}
   - component: {fileID: 1489990836}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -11351,11 +11351,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3172158427039837314, guid: edc9b49a642ce8d408de06ec9e091170, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -468.48
+      value: -467.62
       objectReference: {fileID: 0}
     - target: {fileID: 3172158427039837314, guid: edc9b49a642ce8d408de06ec9e091170, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -231.48
+      value: -232.03
       objectReference: {fileID: 0}
     - target: {fileID: 3172158427039837314, guid: edc9b49a642ce8d408de06ec9e091170, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12453,7 +12453,7 @@ GameObject:
   - component: {fileID: 1795020567}
   - component: {fileID: 1795020569}
   - component: {fileID: 1795020568}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -12779,7 +12779,7 @@ GameObject:
   - component: {fileID: 1831738587}
   - component: {fileID: 1831738589}
   - component: {fileID: 1831738588}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -13118,7 +13118,7 @@ GameObject:
   - component: {fileID: 1945428598}
   - component: {fileID: 1945428600}
   - component: {fileID: 1945428599}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}

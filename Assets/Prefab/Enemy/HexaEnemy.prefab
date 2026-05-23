@@ -172,6 +172,8 @@ GameObject:
   - component: {fileID: 8930727569648806318}
   - component: {fileID: 8788169164939523545}
   - component: {fileID: 5215120366644861381}
+  - component: {fileID: 3240973506981376363}
+  - component: {fileID: 4714175112260135115}
   m_Layer: 0
   m_Name: Hexagon Enemy
   m_TagString: Enemy
@@ -283,12 +285,12 @@ MonoBehaviour:
   moveSpeed: 3
   rotationSpeed: 360
   stopDistance: 0.2
-  drawGizmos: 1
   usePatrol: 1
   patrolPoints: []
   patrolWaitTime: 1
   patrolThreshold: 0.2
   patrolRadius: 10
+  drawGizmos: 1
 --- !u!50 &8788169164939523545
 Rigidbody2D:
   serializedVersion: 4
@@ -367,6 +369,41 @@ PolygonCollider2D:
       - {x: 0.5, y: 0}
       - {x: 0.25, y: 0.43359375}
   m_UseDelaunayMesh: 0
+--- !u!114 &3240973506981376363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2170036561787909274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6da1e481b679744bbfc9236ba79923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseRefreshRate: 0.3
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &4714175112260135115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2170036561787909274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c5e55ed90f76f849a982c4a4f218f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeSize: 1
+  gridWidth: 100
+  gridHeight: 100
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  drawGizmos: 0
 --- !u!1 &3716211552957711305
 GameObject:
   m_ObjectHideFlags: 0

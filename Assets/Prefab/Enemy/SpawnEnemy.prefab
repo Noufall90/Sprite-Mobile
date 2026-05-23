@@ -50,5 +50,5 @@ MonoBehaviour:
   - {fileID: 3923500176635283465, guid: b792c986baffb984d92b670675369c4c, type: 3}
   _minimumSpawnTime: 2
   _maximumSpawnTime: 5
-  onlyOneAtOnce: 1
-  preventDuplicateType: 1
+  onlyOneAtOnce: 0
+  preventDuplicateType: 0

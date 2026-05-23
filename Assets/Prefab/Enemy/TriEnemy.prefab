@@ -550,8 +550,9 @@ GameObject:
   - component: {fileID: 6071744460191708207}
   - component: {fileID: 7465760453980184983}
   - component: {fileID: 1184615145076742751}
-  - component: {fileID: 4642093093579008506}
   - component: {fileID: 1418332867496726791}
+  - component: {fileID: 8307020950439418811}
+  - component: {fileID: 8883439022176821842}
   m_Layer: 0
   m_Name: Square Enemy
   m_TagString: Enemy
@@ -663,12 +664,12 @@ MonoBehaviour:
   moveSpeed: 3
   rotationSpeed: 360
   stopDistance: 0.2
-  drawGizmos: 1
   usePatrol: 1
   patrolPoints: []
   patrolWaitTime: 1
   patrolThreshold: 0.2
   patrolRadius: 10
+  drawGizmos: 1
 --- !u!50 &1184615145076742751
 Rigidbody2D:
   serializedVersion: 4
@@ -696,54 +697,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &4642093093579008506
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6798825988062414068}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 0.8828125}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 0.5773587}
-      - {x: -0.5, y: -0.28866667}
-      - {x: 0.5, y: -0.28866667}
-  m_UseDelaunayMesh: 0
 --- !u!60 &1418332867496726791
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -792,3 +745,38 @@ PolygonCollider2D:
       - {x: -0.5, y: -0.28866667}
       - {x: 0.5, y: -0.28866667}
   m_UseDelaunayMesh: 0
+--- !u!114 &8307020950439418811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6798825988062414068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6da1e481b679744bbfc9236ba79923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseRefreshRate: 0.3
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &8883439022176821842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6798825988062414068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c5e55ed90f76f849a982c4a4f218f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeSize: 1
+  gridWidth: 100
+  gridHeight: 100
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  drawGizmos: 0

@@ -5,41 +5,20 @@ using UnityEngine.UI;
 public class WaveUI : MonoBehaviour
 {
     public static WaveUI Instance { get; private set; }
-
     [Header("UI Elements")]
     [SerializeField] private GameObject resultsPanel;
-
-    [Header("Result Panel")]
     [SerializeField] private TMP_Text waveNumberText;
     [SerializeField] private TMP_Text waveScoreText;
     [SerializeField] private TMP_Text highestScoreText;
-
-    [Header("Gameplay HUD")]
-    [SerializeField] private TMP_Text waveScoreGameText;
-
-    [Header("Buttons")]
     [SerializeField] private Button nextWaveButton;
     [SerializeField] private Button mainMenuButton;
 
     private WaveManager waveManager;
 
-    // Total score selama game
-    private int currentScore = 0;
-
-    // Score khusus wave sekarang
-    private int waveScore = 0;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
-
     private void Start()
     {
+        Instance = this;
         waveManager = FindObjectOfType<WaveManager>();
-
-        EnemyHealth.OnEnemyKilled += OnEnemyKilled;
-        WaveManager.OnWaveStart += OnWaveStart;
 
         if (resultsPanel != null)
         {
@@ -55,19 +34,11 @@ public class WaveUI : MonoBehaviour
         {
             mainMenuButton.onClick.AddListener(OnMainMenuClicked);
         }
-
-        UpdateScoreUI();
-    }
-
-    private void OnDestroy()
-    {
-        EnemyHealth.OnEnemyKilled -= OnEnemyKilled;
-        WaveManager.OnWaveStart -= OnWaveStart;
     }
 
     public void ShowResults(
         int waveNumber,
-        int waveScoreResult,
+        int waveScore,
         int highestScore
     )
     {
@@ -76,7 +47,8 @@ public class WaveUI : MonoBehaviour
             resultsPanel.SetActive(true);
         }
 
-        WaveTime waveTime = FindObjectOfType<WaveTime>();
+        WaveTime waveTime =
+            FindObjectOfType<WaveTime>();
 
         if (waveTime != null)
         {
@@ -85,64 +57,25 @@ public class WaveUI : MonoBehaviour
 
         if (waveNumberText != null)
         {
-            waveNumberText.text = $"Wave {waveNumber}";
+            waveNumberText.text =
+                $"Wave {waveNumber}";
         }
 
-        // Score wave saja
         if (waveScoreText != null)
         {
-            waveScoreText.text = $"Wave Score: {waveScoreResult}";
+            waveScoreText.text =
+                $"Wave Score: {waveScore}";
         }
 
-        if (HighScoreManager.Instance != null)
+        if (highestScoreText != null)
         {
-            HighScoreManager.Instance.TrySetNewHighScore(highestScore);
-
-            if (highestScoreText != null)
-            {
-                highestScoreText.text =
-                    $"Highest Score: {HighScoreManager.Instance.HighestScore}";
-            }
-        }
-    }
-
-    private void OnWaveStart(int waveNumber)
-    {
-        // Reset hanya score wave
-        waveScore = 0;
-
-        UpdateScoreUI();
-    }
-
-    private void OnEnemyKilled(int points)
-    {
-        // Tambah total score
-        currentScore += points;
-
-        // Tambah score wave
-        waveScore += points;
-
-        UpdateScoreUI();
-
-        if (waveManager != null)
-        {
-            waveManager.AddWaveScore(points);
+            highestScoreText.text =
+                $"Highest Score: {highestScore}";
         }
 
-        // Update highscore realtime
-        if (HighScoreManager.Instance != null)
-        {
-            HighScoreManager.Instance.TrySetNewHighScore(currentScore);
-        }
-    }
-
-    private void UpdateScoreUI()
-    {
-        // HUD realtime total score
-        if (waveScoreGameText != null)
-        {
-            waveScoreGameText.text = $"Score : {currentScore}";
-        }
+        // Persist highest score to PlayerPrefs so MainMenu reads the same value
+        PlayerPrefs.SetInt("HighestScore", highestScore);
+        PlayerPrefs.Save();
     }
 
     public bool IsResultsVisible()

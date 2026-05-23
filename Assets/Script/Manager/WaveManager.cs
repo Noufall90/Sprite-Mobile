@@ -26,7 +26,7 @@ public class WaveManager : MonoBehaviour
 
     private void Awake()
     {
-        highestScore = (HighScoreManager.Instance != null) ? HighScoreManager.Instance.HighestScore : PlayerPrefs.GetInt("HighestScore", 0);
+        highestScore = PlayerPrefs.GetInt("HighestScore", 0);
 
         if (waveSpawn == null) waveSpawn = FindObjectOfType<WaveSpawn>();
         if (waveTime == null) waveTime = FindObjectOfType<WaveTime>();
@@ -101,15 +101,10 @@ public class WaveManager : MonoBehaviour
 
         waveHasEnded = true;
 
-        // Update global high score via HighScoreManager
-        if (HighScoreManager.Instance != null)
-        {
-            HighScoreManager.Instance.TrySetNewHighScore(waveScore);
-            highestScore = HighScoreManager.Instance.HighestScore;
-        }
-        else if (waveScore > highestScore)
+        if (waveScore > highestScore)
         {
             highestScore = waveScore;
+
             PlayerPrefs.SetInt("HighestScore", highestScore);
             PlayerPrefs.Save();
         }

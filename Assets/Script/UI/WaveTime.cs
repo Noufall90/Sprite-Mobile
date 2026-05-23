@@ -20,14 +20,14 @@ public class WaveTime : MonoBehaviour
         UpdateUI();
     }
 
+    // Start the gameplay timer for the given wave number
     public void StartGameplayTimer(int waveNumber = 1)
     {
-        // Cap wave used for time scaling to at most wave 3 so time won't increase beyond that
-        int cappedWave = Mathf.Clamp(waveNumber, 1, 3);
-        float duration = timeWave + Mathf.Max(0, cappedWave - 1) * timeAddWave;
+        float duration = timeWave + Mathf.Max(0, waveNumber - 1) * timeAddWave;
         SetTime(duration, true);
     }
 
+    // Start a preparation / countdown timer before the wave begins
     public void StartPrep(float duration)
     {
         SetTime(duration, false);
@@ -66,11 +66,13 @@ public class WaveTime : MonoBehaviour
         }
     }
 
+    // Returns true only when the gameplay timer has finished
     public bool IsGameplayTimeUp()
     {
         return timeRemaining <= 0f && !isCountingDown && isGameplayTimer;
     }
 
+    // Returns true when a preparation/countdown timer has finished
     public bool IsPrepFinished()
     {
         return timeRemaining <= 0f && !isCountingDown && !isGameplayTimer;
@@ -85,6 +87,7 @@ public class WaveTime : MonoBehaviour
         UpdateUI();
     }
 
+    // Explicitly set timer to zero and clear state (used when showing results)
     public void SetTimeZero()
     {
         timeRemaining = 0f;
