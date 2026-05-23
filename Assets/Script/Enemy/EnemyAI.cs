@@ -5,16 +5,12 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("Detection Settings")]
     [SerializeField] private float detectionAngle = 60f;
-
     [SerializeField] private float detectionRange = 10f;
-
     [SerializeField] private float angleOffset = 0f;
 
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 3f;
-
     [SerializeField] private float rotationSpeed = 360f;
-
     [SerializeField] private float stopDistance = 0.2f;
 
     [Header("Debug")]
@@ -25,19 +21,13 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Transform[] patrolPoints;
     [SerializeField] private float patrolWaitTime = 1f;
     [SerializeField] private float patrolThreshold = 0.2f;
-    [SerializeField] private float patrolRadius = 3f; // fallback roaming radius when no points
+    [SerializeField] private float patrolRadius = 3f;
 
     private Rigidbody2D rb;
-
     private Transform target;
-
     private bool isPlayerDetected;
-
     private Vector2 directionToPlayer;
-
     private float distanceToPlayer;
-
-    // Patrol state
     private int patrolIndex = 0;
     private float patrolWaitTimer = 0f;
     private Vector2 patrolOrigin;
@@ -84,9 +74,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // =========================
-    // PATROL
-    // =========================
     private void Patrol()
     {
         if (patrolWaitTimer > 0f)
@@ -145,9 +132,6 @@ public class EnemyAI : MonoBehaviour
         rb.MoveRotation(smoothAngle);
     }
 
-    // =========================
-    // FIND PLAYER
-    // =========================
     private void FindPlayer()
     {
         GameObject player =
@@ -159,9 +143,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // =========================
-    // PLAYER DETECTION
-    // =========================
     private void DetectPlayer()
     {
         Vector2 currentPosition = rb.position;
@@ -194,9 +175,6 @@ public class EnemyAI : MonoBehaviour
             angle <= detectionAngle * 0.5f;
     }
 
-    // =========================
-    // MOVEMENT
-    // =========================
     private void MoveToPlayer()
     {
         if (distanceToPlayer <= stopDistance)
@@ -219,9 +197,6 @@ public class EnemyAI : MonoBehaviour
         rb.velocity = Vector2.zero;
     }
 
-    // =========================
-    // ROTATION
-    // =========================
     private void RotateToPlayer()
     {
         Vector2 direction =
@@ -255,9 +230,6 @@ public class EnemyAI : MonoBehaviour
         rb.MoveRotation(smoothAngle);
     }
 
-    // =========================
-    // FORWARD DIRECTION
-    // =========================
     private Vector2 GetForwardDirection()
     {
         float angle =
@@ -270,9 +242,6 @@ public class EnemyAI : MonoBehaviour
         );
     }
 
-    // =========================
-    // GIZMOS
-    // =========================
     private void OnDrawGizmosSelected()
     {
         if (!drawGizmos)
@@ -320,11 +289,8 @@ public class EnemyAI : MonoBehaviour
         );
     }
 
-    // =========================
-    // PUBLIC API
-    // =========================
     public bool IsPlayerDetected()
-    {
+    {   
         return isPlayerDetected;
     }
 }

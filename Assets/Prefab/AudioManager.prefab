@@ -193,6 +193,9 @@ MonoBehaviour:
   - groupID: DeathEnemy
     clips:
     - {fileID: 8300000, guid: 6a0fb96b06580754c96489f0b30c614d, type: 3}
+  - groupID: PickUpHealthItem
+    clips:
+    - {fileID: 8300000, guid: bbc7aa9e3c6cfd845af9241be49a13be, type: 3}
 --- !u!114 &498411239008388306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,6 +241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicLibrary: {fileID: 4538966523864810026}
   musicSource: {fileID: 1603872102981061051}
+  sceneTracks: []
 --- !u!1 &8845713312415210880
 GameObject:
   m_ObjectHideFlags: 0

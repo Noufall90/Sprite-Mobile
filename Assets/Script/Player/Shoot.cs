@@ -11,6 +11,9 @@ public class Shoot : MonoBehaviour
     public int damage;
     private float readyForNextShot = 0f;
     public Animator gunAnimator;
+    [Header("External Fire")]
+    public bool useExternalFire = true; // mobile-first: shooting triggered externally (e.g., joystick)
+    private bool externalFiring = false;
 
     private void Awake()
     {
@@ -20,26 +23,28 @@ public class Shoot : MonoBehaviour
 
     void Update()
     {
-        // Do not allow shooting while the game is paused or wave results are showing
         if (Time.timeScale <= 0f)
             return;
 
         if (WaveUI.Instance != null && WaveUI.Instance.IsResultsVisible())
             return;
 
-        if (Input.GetMouseButtonDown(0))
+        if (useExternalFire)
         {
-            SoundManager.Instance.PlaySound2D("FirePlayer");
-            shoot();
-            readyForNextShot = Time.time + (1f / Mathf.Max(fireRate, 0.0001f));
+            if (externalFiring && Time.time >= readyForNextShot)
+            {
+                if (SoundManager.Instance != null)
+                    SoundManager.Instance.PlaySound2D("FirePlayer");
+                shoot();
+                readyForNextShot = Time.time + (1f / Mathf.Max(fireRate, 0.0001f));
+            }
             return;
         }
+    }
 
-        if (Input.GetMouseButton(0) && Time.time >= readyForNextShot)
-        {
-            shoot();
-            readyForNextShot = Time.time + (1f / Mathf.Max(fireRate, 0.0001f));
-        }
+    public void SetExternalFiring(bool firing)
+    {
+        externalFiring = firing;
     }
 
     void shoot()

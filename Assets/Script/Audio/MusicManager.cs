@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
  
 public class MusicManager : MonoBehaviour
 {
@@ -9,6 +10,17 @@ public class MusicManager : MonoBehaviour
     private MusicLibrary musicLibrary;
     [SerializeField]
     private AudioSource musicSource;
+
+    [System.Serializable]
+    public struct SceneTrack
+    {
+        public string sceneName;
+        public string trackName;
+    }
+
+    [Header("Scene Music")]
+    [SerializeField]
+    private SceneTrack[] sceneTracks;
  
     private void Awake()
     {
@@ -21,11 +33,61 @@ public class MusicManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        string trackToPlay = null;
+        if (sceneTracks != null)
+        {
+            foreach (var st in sceneTracks)
+            {
+                if (!string.IsNullOrEmpty(st.sceneName) && st.sceneName == scene.name)
+                {
+                    trackToPlay = st.trackName;
+                    break;
+                }
+            }
+        }
+
+        if (string.IsNullOrEmpty(trackToPlay))
+        {
+            trackToPlay = scene.name;
+        }
+
+        // Only play if the clip exists
+        if (musicLibrary != null && musicLibrary.GetClipFromName(trackToPlay) != null)
+        {
+            PlayMusic(trackToPlay);
+        }
     }
  
     public void PlayMusic(string trackName, float fadeDuration = 0.5f)
     {
-        StartCoroutine(AnimateMusicCrossfade(musicLibrary.GetClipFromName(trackName), fadeDuration));
+        if (musicLibrary == null)
+        {
+            return;
+        }
+
+        AudioClip clip = musicLibrary.GetClipFromName(trackName);
+        if (clip == null)
+        {
+            return;
+        }
+
+        if (musicSource == null)
+        {
+            return;
+        }
+
+        StartCoroutine(AnimateMusicCrossfade(clip, fadeDuration));
     }
  
     IEnumerator AnimateMusicCrossfade(AudioClip nextTrack, float fadeDuration = 0.5f)

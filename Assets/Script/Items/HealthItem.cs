@@ -6,7 +6,6 @@ public class HealthItem : MonoBehaviour
     [Header("Pickup Settings")]
     [SerializeField] private int healAmount = 10;
     [SerializeField] private string playerTag = "Player";
-    [SerializeField] private AudioClip pickupSound;
 
     private void Reset()
     {
@@ -20,6 +19,7 @@ public class HealthItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        SoundManager.Instance.PlaySound2D("PickUpHealthItem");
         if (!other.CompareTag(playerTag))
             return;
 
@@ -28,16 +28,6 @@ public class HealthItem : MonoBehaviour
         {
             hp.Heal(healAmount);
         }
-        else
-        {
-            Debug.LogWarning($"HealthItem: Player does not have HealthPlayer component on {other.name}");
-        }
-
-        if (pickupSound != null)
-        {
-            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-        }
-
         Destroy(gameObject);
     }
 }

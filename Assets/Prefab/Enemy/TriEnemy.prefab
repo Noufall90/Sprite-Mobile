@@ -657,8 +657,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51f89db78c35fd84aa46d7e7389f18f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionAngle: 350
-  detectionRange: 10
+  detectionAngle: 360
+  detectionRange: 20
   angleOffset: 0
   moveSpeed: 3
   rotationSpeed: 360

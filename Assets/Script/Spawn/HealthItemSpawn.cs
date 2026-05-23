@@ -1,19 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HealthItemSpawn : MonoBehaviour
 {
     [SerializeField] GameObject[] _enemyPrefab;
-    [SerializeField] float spawnDelay = 5f;
+    [SerializeField] float spawnItem;
+    [SerializeField] private float respawnItem; 
     private float _timeUtilSpawn;
     [Header("Spawn Options")]
     [SerializeField] private bool onlyOneAtOnce = false;
     [SerializeField] private bool preventDuplicateType = true;
+    private struct ActiveInstance
+    {
+        public GameObject go;
+        public int prefabIndex;
+    }
 
-    // track active instances we've spawned
-    private System.Collections.Generic.List<GameObject> activeInstances = new System.Collections.Generic.List<GameObject>();
-
+    private System.Collections.Generic.List<ActiveInstance> activeInstances = new System.Collections.Generic.List<ActiveInstance>();
     void Awake()
     {
         SetTimeUtilSpawn();
@@ -39,7 +41,7 @@ public class HealthItemSpawn : MonoBehaviour
             if (randomIndex >= 0)
             {
                 GameObject spawned = Instantiate(_enemyPrefab[randomIndex], transform.position, Quaternion.identity);
-                activeInstances.Add(spawned);
+                activeInstances.Add(new ActiveInstance { go = spawned, prefabIndex = randomIndex });
             }
 
             SetTimeUtilSpawn();
@@ -69,8 +71,9 @@ public class HealthItemSpawn : MonoBehaviour
     {
         if (_enemyPrefab == null || prefabIndex < 0 || prefabIndex >= _enemyPrefab.Length) return false;
         string prefabName = _enemyPrefab[prefabIndex].name;
-        foreach (var go in activeInstances)
+        foreach (var ai in activeInstances)
         {
+            var go = ai.go;
             if (go == null) continue;
             if (go.name.StartsWith(prefabName))
                 return true;
@@ -82,17 +85,41 @@ public class HealthItemSpawn : MonoBehaviour
     {
         for (int i = activeInstances.Count - 1; i >= 0; i--)
         {
-            var go = activeInstances[i];
+            var ai = activeInstances[i];
+            var go = ai.go;
             if (go == null || !go.activeInHierarchy)
             {
+                int prefabIdx = ai.prefabIndex;
                 activeInstances.RemoveAt(i);
+                if (respawnItem > 0f)
+                {
+                    StartCoroutine(RespawnAfterDelay(prefabIdx, respawnItem));
+                }
             }
         }
+    }
+
+    private System.Collections.IEnumerator RespawnAfterDelay(int prefabIndex, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // If only one allowed and something else exists, skip respawn
+        if (onlyOneAtOnce && activeInstances.Count > 0)
+            yield break;
+
+        if (preventDuplicateType && IsPrefabActive(prefabIndex))
+            yield break;
+
+        if (_enemyPrefab == null || prefabIndex < 0 || prefabIndex >= _enemyPrefab.Length)
+            yield break;
+
+        GameObject spawned = Instantiate(_enemyPrefab[prefabIndex], transform.position, Quaternion.identity);
+        activeInstances.Add(new ActiveInstance { go = spawned, prefabIndex = prefabIndex });
     }
 
     private void SetTimeUtilSpawn()
     {
         // use fixed spawn delay so we know exactly when next spawn appears
-        _timeUtilSpawn = Mathf.Max(0f, spawnDelay);
+        _timeUtilSpawn = Mathf.Max(0f, spawnItem);
    }
 }

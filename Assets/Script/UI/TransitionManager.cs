@@ -17,6 +17,11 @@ public class TransitionManager : Singleton<TransitionManager>
     {
         base.Awake();
 
+        if (instance != this)
+            return;
+
+        // Keep existing parent (don't detach from Canvas) to ensure UI Image remains renderable
+
         if (fadeImage == null)
         {
             Debug.LogError("Fade Image belum di-assign!");
@@ -24,7 +29,8 @@ public class TransitionManager : Singleton<TransitionManager>
         }
 
         fadeImage.gameObject.SetActive(true);
-        SetAlpha255(255f);
+
+        InstantBlack();
     }
 
     private IEnumerator Start()
@@ -36,19 +42,14 @@ public class TransitionManager : Singleton<TransitionManager>
 
     public void FadeIn()
     {
-        if (!fadeImage.gameObject.activeInHierarchy)
-            fadeImage.gameObject.SetActive(true);
-
-        StartFade(255f);
+        StartFade(1f);
     }
 
     public void FadeOut()
     {
-        if (!fadeImage.gameObject.activeInHierarchy)
-            fadeImage.gameObject.SetActive(true);
-
         StartFade(0f);
     }
+
     public void LoadScene(string sceneName)
     {
         if (currentRoutine != null)
@@ -64,27 +65,39 @@ public class TransitionManager : Singleton<TransitionManager>
 
     private IEnumerator LoadSceneRoutine(string sceneName)
     {
-        yield return FadeRoutine(255f);
-        SceneManager.LoadScene(sceneName);
+        yield return FadeRoutine(1f);
+
+        AsyncOperation op =
+            SceneManager.LoadSceneAsync(sceneName);
+
+        while (!op.isDone)
+        {
+            yield return null;
+        }
+
+        yield return null;
+
+        FadeOut();
     }
 
-    private void StartFade(float targetAlpha255)
+    private void StartFade(float targetAlpha)
     {
         if (currentRoutine != null)
         {
             StopCoroutine(currentRoutine);
         }
 
-        if (!fadeImage.gameObject.activeInHierarchy)
-            fadeImage.gameObject.SetActive(true);
-
-        currentRoutine = StartCoroutine(FadeRoutine(targetAlpha255));
+        currentRoutine =
+            StartCoroutine(
+                FadeRoutine(targetAlpha)
+            );
     }
 
-    private IEnumerator FadeRoutine(float targetAlpha255)
+    private IEnumerator FadeRoutine(float targetAlpha)
     {
-        float startAlpha255 =
-            fadeImage.color.a * 255f;
+        fadeImage.gameObject.SetActive(true);
+
+        float startAlpha = fadeImage.color.a;
 
         float timer = 0f;
 
@@ -92,26 +105,27 @@ public class TransitionManager : Singleton<TransitionManager>
         {
             timer += Time.deltaTime;
 
-            float t =
-                Mathf.Clamp01(
-                    timer / fadeDuration
-                );
+            float t = timer / fadeDuration;
 
-            float alpha255 =
+            Color color = fadeImage.color;
+
+            color.a =
                 Mathf.Lerp(
-                    startAlpha255,
-                    targetAlpha255,
+                    startAlpha,
+                    targetAlpha,
                     t
                 );
 
-            SetAlpha255(alpha255);
+            fadeImage.color = color;
 
             yield return null;
         }
 
-        SetAlpha255(targetAlpha255);
+        Color finalColor = fadeImage.color;
+        finalColor.a = targetAlpha;
+        fadeImage.color = finalColor;
 
-        if (Mathf.Approximately(targetAlpha255, 0f))
+        if (Mathf.Approximately(targetAlpha, 0f))
         {
             fadeImage.gameObject.SetActive(false);
         }
@@ -119,25 +133,21 @@ public class TransitionManager : Singleton<TransitionManager>
         currentRoutine = null;
     }
 
-    private void SetAlpha255(float alpha255)
-    {
-        Color color = fadeImage.color;
-
-        color.a =
-            Mathf.Clamp01(alpha255 / 255f);
-
-        fadeImage.color = color;
-    }
-    
     public void InstantBlack()
     {
         fadeImage.gameObject.SetActive(true);
-        SetAlpha255(255f);
+
+        Color color = fadeImage.color;
+        color.a = 1f;
+        fadeImage.color = color;
     }
 
     public void InstantClear()
     {
-        SetAlpha255(0f);
+        Color color = fadeImage.color;
+        color.a = 0f;
+        fadeImage.color = color;
+
         fadeImage.gameObject.SetActive(false);
     }
 }
