@@ -265,7 +265,6 @@ GameObject:
   - component: {fileID: 7600505518890850832}
   - component: {fileID: 7540645678742893652}
   - component: {fileID: 1663365812256309649}
-  - component: {fileID: 4613622596024979279}
   m_Layer: 0
   m_Name: Square Enemy
   m_TagString: Enemy
@@ -471,25 +470,6 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &4613622596024979279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2220013283403575381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c5e55ed90f76f849a982c4a4f218f2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeSize: 1
-  gridWidth: 100
-  gridHeight: 100
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  drawGizmos: 0
 --- !u!1 &2853013937553150583
 GameObject:
   m_ObjectHideFlags: 0

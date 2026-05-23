@@ -12,8 +12,10 @@ public class WaveUI : MonoBehaviour
     [SerializeField] private TMP_Text highestScoreText;
     [SerializeField] private Button nextWaveButton;
     [SerializeField] private Button mainMenuButton;
+    public TMP_Text waveScroreGame; // live score display during gameplay
 
     private WaveManager waveManager;
+    private int currentScore = 0;
 
     private void Start()
     {
@@ -34,6 +36,16 @@ public class WaveUI : MonoBehaviour
         {
             mainMenuButton.onClick.AddListener(OnMainMenuClicked);
         }
+
+        // Subscribe to events to track live scoring
+        EnemyHealth.OnEnemyKilled += OnEnemyKilled;
+        WaveManager.OnWaveStart += OnWaveStart;
+    }
+
+    private void OnDestroy()
+    {
+        EnemyHealth.OnEnemyKilled -= OnEnemyKilled;
+        WaveManager.OnWaveStart -= OnWaveStart;
     }
 
     public void ShowResults(
@@ -73,9 +85,41 @@ public class WaveUI : MonoBehaviour
                 $"Highest Score: {highestScore}";
         }
 
-        // Persist highest score to PlayerPrefs so MainMenu reads the same value
-        PlayerPrefs.SetInt("HighestScore", highestScore);
-        PlayerPrefs.Save();
+        // Synchronize with HighScoreManager (source of truth)
+        if (HighScoreManager.Instance != null)
+        {
+            HighScoreManager.Instance.TrySetNewHighScore(highestScore);
+            // Ensure displayed value reflects the manager's stored value
+            if (highestScoreText != null)
+            {
+                highestScoreText.text = $"Highest Score: {HighScoreManager.Instance.HighestScore}";
+            }
+        }
+    }
+
+    private void OnWaveStart(int waveNumber)
+    {
+        currentScore = 0;
+        UpdateScoreUI();
+    }
+
+    private void OnEnemyKilled(int points)
+    {
+        currentScore += points;
+        UpdateScoreUI();
+
+        if (waveManager != null)
+        {
+            waveManager.AddWaveScore(points);
+        }
+    }
+
+    private void UpdateScoreUI()
+    {
+        if (waveScroreGame != null)
+        {
+            waveScroreGame.text = currentScore.ToString();
+        }
     }
 
     public bool IsResultsVisible()

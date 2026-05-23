@@ -173,7 +173,6 @@ GameObject:
   - component: {fileID: 8788169164939523545}
   - component: {fileID: 5215120366644861381}
   - component: {fileID: 3240973506981376363}
-  - component: {fileID: 4714175112260135115}
   m_Layer: 0
   m_Name: Hexagon Enemy
   m_TagString: Enemy
@@ -385,25 +384,6 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &4714175112260135115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2170036561787909274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c5e55ed90f76f849a982c4a4f218f2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeSize: 1
-  gridWidth: 100
-  gridHeight: 100
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  drawGizmos: 0
 --- !u!1 &3716211552957711305
 GameObject:
   m_ObjectHideFlags: 0

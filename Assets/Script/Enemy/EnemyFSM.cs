@@ -295,7 +295,9 @@ public class EnemyFSM : MonoBehaviour
             ai.Position);
         ChaseState  = new ChaseState(ai, this, chaseRefreshRate, obstacleLayer);
 
-        ChangeState(ai.UsePatrol ? (EnemyState)PatrolState : IdleState);
+        // LANGSUNG mulai ChaseState saat enemy spawn, tidak menunggu deteksi
+        // Enemy akan langsung mengejar player tanpa delay
+        ChangeState(ChaseState);
     }
 
     private void FixedUpdate()

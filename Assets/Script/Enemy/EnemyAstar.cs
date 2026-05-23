@@ -24,7 +24,16 @@ public class EnemyAstar : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this)
+        {
+            // Hanya hapus KOMPONEN ini (bukan seluruh GameObject-nya!).
+            // Jika EnemyAstar ada di dalam enemy prefab, Destroy(gameObject)
+            // akan menghancurkan seluruh enemy ke-2. Destroy(this) hanya
+            // menghapus komponen EnemyAstar duplikat saja.
+            Destroy(this);
+            return;
+        }
+
         Instance = this;
         BuildGrid();
     }
