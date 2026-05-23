@@ -64,9 +64,6 @@ public class HealthPlayer : MonoBehaviour
     private void Die()
     {
         isDead = true;
-
-        Debug.Log("Player Dead");
-
         if (deathCoroutine != null)
         {
             StopCoroutine(deathCoroutine);

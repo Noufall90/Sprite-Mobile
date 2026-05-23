@@ -192,7 +192,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 5b2a3bd17fee92644bb374b264795565, type: 3}
   - groupID: DeathEnemy
     clips:
-    - {fileID: 8300000, guid: 655488e190284ba41ae33dfd349753fc, type: 3}
+    - {fileID: 8300000, guid: 6a0fb96b06580754c96489f0b30c614d, type: 3}
 --- !u!114 &498411239008388306
 MonoBehaviour:
   m_ObjectHideFlags: 0

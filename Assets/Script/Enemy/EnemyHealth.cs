@@ -8,7 +8,6 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] protected int maxHealth = 100;
     [SerializeField] protected int currentHealth;
     [Header("Death Settings")]
-    [Tooltip("If true, destroy the root GameObject (top-level) on death. Otherwise destroy the GameObject that has this component.")]
     [SerializeField] private bool destroyRootOnDeath = true;
     [Header("UI")]
     [SerializeField] private FloatingBar floatingBar;
@@ -72,16 +71,10 @@ public class EnemyHealth : MonoBehaviour
     {
         isDead = true;
 
-        Debug.Log("Enemy Dead");
-
-        // Trigger OnDeath event
         OnDeath?.Invoke();
 
-        // award points to global listeners
         OnEnemyKilled?.Invoke(10);
 
-        // Try to find a CameraShake component on parent hierarchy first,
-        // otherwise fall back to the first CameraShake in the scene.
         CameraShake camShake = GetComponentInParent<CameraShake>();
         if (camShake == null)
         {
@@ -93,7 +86,6 @@ public class EnemyHealth : MonoBehaviour
             camShake.TriggerShake();
         }
 
-        // Destroy the appropriate GameObject after a dissolve effect
         GameObject toDestroy = destroyRootOnDeath ? transform.root.gameObject : gameObject;
         StartCoroutine(DissolveAndDestroy(toDestroy, desolveDuration));
     }
@@ -102,11 +94,13 @@ public class EnemyHealth : MonoBehaviour
     {
         if (toDestroy == null)
             yield break;
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound2D("DeathEnemy");
+        }
 
-        // Collect renderers under the object
         var renderers = toDestroy.GetComponentsInChildren<Renderer>();
 
-        // Read initial value from first renderer that has the property
         float start = 0f;
         foreach (var r in renderers)
         {
@@ -120,7 +114,7 @@ public class EnemyHealth : MonoBehaviour
         }
 
         float elapsed = 0f;
-        bool soundPlayed = false;
+        bool stoppedMovement = false;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -137,20 +131,39 @@ public class EnemyHealth : MonoBehaviour
                 }
             }
 
-            // Play enemy death sound once when dissolve reaches 0.1
-            if (!soundPlayed && val >= 0.1f)
+            if (!stoppedMovement && val >= 0.9f)
             {
-                if (SoundManager.Instance != null)
+                var rbs = toDestroy.GetComponentsInChildren<Rigidbody2D>();
+                foreach (var rb in rbs)
                 {
-                    SoundManager.Instance.PlaySound2D("DeathEnemy");
+                    if (rb == null) continue;
+                    rb.velocity = Vector2.zero;
+                    rb.angularVelocity = 0f;
+                    rb.simulated = false;
                 }
-                soundPlayed = true;
+
+                // Disable EnemyAI scripts so they won't resume movement
+                var ais = toDestroy.GetComponentsInChildren<EnemyAI>();
+                foreach (var ai in ais)
+                {
+                    if (ai == null) continue;
+                    ai.enabled = false;
+                }
+
+                // Disable EnemyShoot scripts so they stop firing
+                var shoots = toDestroy.GetComponentsInChildren<EnemyShoot>();
+                foreach (var s in shoots)
+                {
+                    if (s == null) continue;
+                    s.enabled = false;
+                }
+
+                stoppedMovement = true;
             }
 
             yield return null;
         }
 
-        // ensure final value
         foreach (var r in renderers)
         {
             if (r == null) continue;
@@ -160,16 +173,6 @@ public class EnemyHealth : MonoBehaviour
                 mat.SetFloat("_DesolveAmount", desolveTarget);
             }
         }
-
-        // In case the loop finished without hitting 0.1 (very short durations), play sound if needed
-        if (!soundPlayed && desolveTarget >= 0.1f)
-        {
-            if (SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySound2D("DeathEnemy");
-            }
-        }
-
         Destroy(toDestroy);
     }
 
@@ -177,10 +180,8 @@ public class EnemyHealth : MonoBehaviour
     {
         if (other.CompareTag("Bullet"))
         {
-            // Try to get damage from a Shoot or Bullet component on the projectile
             int damageTaken = 0;
 
-            // Prefer a dedicated Bullet component on the projectile
             Bullet bulletComp = other.GetComponent<Bullet>();
             if (bulletComp != null)
             {
@@ -188,7 +189,6 @@ public class EnemyHealth : MonoBehaviour
             }
             else
             {
-                // Fallback: check for Shoot component (if the player-script was placed on projectile)
                 Shoot bulletShoot = other.GetComponent<Shoot>();
                 if (bulletShoot != null)
                 {
@@ -196,7 +196,6 @@ public class EnemyHealth : MonoBehaviour
                 }
                 else
                 {
-                    // support other projectile components by scanning for a public 'damage' field
                     var comps = other.GetComponents<MonoBehaviour>();
                     foreach (var c in comps)
                     {

@@ -17,16 +17,12 @@ public class FloatingBar : MonoBehaviour
 
     [SerializeField] private bool followRotation = false;
 
-    private Camera mainCamera;
-
     private float targetFill = 1f;
 
     private Coroutine hideCoroutine;
 
     private void Awake()
     {
-        mainCamera = Camera.main;
-
         gameObject.SetActive(false);
     }
 
@@ -37,9 +33,6 @@ public class FloatingBar : MonoBehaviour
         UpdateBarSmooth();
     }
 
-    // =========================
-    // FOLLOW TARGET
-    // =========================
     private void FollowTarget()
     {
         if (target == null)
@@ -60,9 +53,6 @@ public class FloatingBar : MonoBehaviour
         }
     }
 
-    // =========================
-    // BAR UPDATE
-    // =========================
     private void UpdateBarSmooth()
     {
         if (bar != null)
@@ -80,7 +70,14 @@ public class FloatingBar : MonoBehaviour
         if (max <= 0)
             return;
 
-        targetFill = (float)current / max;
+        // Calculate and clamp target fill to avoid invalid values
+        targetFill = Mathf.Clamp01((float)current / (float)max);
+
+        // Immediately apply the fill so the bar matches current health
+        if (bar != null)
+        {
+            bar.fillAmount = targetFill;
+        }
 
         if (points != null && points.Length > 0)
         {
@@ -113,9 +110,6 @@ public class FloatingBar : MonoBehaviour
         return current >= threshold;
     }
 
-    // =========================
-    // SHOW / HIDE
-    // =========================
     public void ShowTemporary(float duration)
     {
         if (!gameObject.activeSelf)
@@ -143,9 +137,6 @@ public class FloatingBar : MonoBehaviour
         hideCoroutine = null;
     }
 
-    // =========================
-    // PUBLIC API
-    // =========================
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class WaveUI : MonoBehaviour
 {
+    public static WaveUI Instance { get; private set; }
     [Header("UI Elements")]
     [SerializeField] private GameObject resultsPanel;
     [SerializeField] private TMP_Text waveNumberText;
@@ -16,6 +17,7 @@ public class WaveUI : MonoBehaviour
 
     private void Start()
     {
+        Instance = this;
         waveManager = FindObjectOfType<WaveManager>();
 
         if (resultsPanel != null)
@@ -74,6 +76,11 @@ public class WaveUI : MonoBehaviour
         // Persist highest score to PlayerPrefs so MainMenu reads the same value
         PlayerPrefs.SetInt("HighestScore", highestScore);
         PlayerPrefs.Save();
+    }
+
+    public bool IsResultsVisible()
+    {
+        return resultsPanel != null && resultsPanel.activeSelf;
     }
 
     public void OnNextWaveClicked()

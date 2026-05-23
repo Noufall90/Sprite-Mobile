@@ -1,7 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Collider2D))]
 public class BulletEnemy : MonoBehaviour
 {
     [Header("Damage")]
@@ -15,15 +13,10 @@ public class BulletEnemy : MonoBehaviour
 
     private void Awake()
     {
-        Rigidbody2D rb =
-            GetComponent<Rigidbody2D>();
-
-        rb.gravityScale = 0f;
-
         Collider2D col =
             GetComponent<Collider2D>();
 
-        col.isTrigger = true;
+        col.isTrigger = false;
     }
 
     private void Start()
@@ -31,23 +24,31 @@ public class BulletEnemy : MonoBehaviour
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        // HIT PLAYER ONLY
-        if (!other.CompareTag("Player"))
-            return;
+        var col = collision.collider;
 
-        HealthPlayer playerHealth =
-            other.GetComponent<HealthPlayer>();
-
-        if (playerHealth != null)
+        // Hit player
+        if (col.CompareTag("Player"))
         {
-            playerHealth.TakeDamage(damage);
+            var playerHealth = col.GetComponentInParent<HealthPlayer>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+            }
+
+            if (destroyOnHit)
+                Destroy(gameObject);
+
+            return;
         }
 
-        if (destroyOnHit)
+        // Hit wall -> destroy bullet
+        if (col.CompareTag("Wall"))
         {
-            Destroy(gameObject);
+            if (destroyOnHit)
+                Destroy(gameObject);
+            return;
         }
     }
 }

@@ -18,9 +18,15 @@ public class Shoot : MonoBehaviour
         fireRate = Mathf.Max(fireRate, 0.0001f);
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Do not allow shooting while the game is paused or wave results are showing
+        if (Time.timeScale <= 0f)
+            return;
+
+        if (WaveUI.Instance != null && WaveUI.Instance.IsResultsVisible())
+            return;
+
         if (Input.GetMouseButtonDown(0))
         {
             SoundManager.Instance.PlaySound2D("FirePlayer");

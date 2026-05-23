@@ -92,9 +92,6 @@ public class WaveManager : MonoBehaviour
         }
 
         OnWaveStart?.Invoke(currentWave);
-
-        Debug.Log($"--- Wave {currentWave} Started ---");
-
         currentWave++;
     }
 
