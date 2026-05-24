@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionAngle: 360
-  detectionRange: 20
+  detectionRange: 30
   angleOffset: 0
   moveSpeed: 4
   rotationSpeed: 360

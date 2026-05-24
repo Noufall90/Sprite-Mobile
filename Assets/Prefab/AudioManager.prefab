@@ -193,9 +193,12 @@ MonoBehaviour:
   - groupID: DeathEnemy
     clips:
     - {fileID: 8300000, guid: 6a0fb96b06580754c96489f0b30c614d, type: 3}
-  - groupID: PickUpHealthItem
+  - groupID: PickUpItem
     clips:
     - {fileID: 8300000, guid: bbc7aa9e3c6cfd845af9241be49a13be, type: 3}
+  - groupID: Button
+    clips:
+    - {fileID: 8300000, guid: c5f0d1266301c8f40973a8edd7767d3c, type: 3}
 --- !u!114 &498411239008388306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tracks:
-  - trackName: Play
+  - trackName: Level_1
     clip: {fileID: 8300000, guid: 81b2587d551696242b3f55fee5cdf8c8, type: 3}
   - trackName: MainMenu
     clip: {fileID: 8300000, guid: 07f3201a78672434995668b4432f4d6f, type: 3}

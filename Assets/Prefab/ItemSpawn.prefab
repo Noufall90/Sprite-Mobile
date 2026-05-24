@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6838067331275347730}
   - component: {fileID: 3660717905416579561}
   m_Layer: 0
-  m_Name: HealthItem
+  m_Name: ItemSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d112b77e2217f429580ee38c8a1a40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab:
-  - {fileID: 738913156060998810, guid: 12c11b8d2af791d48bed9676aa0f4473, type: 3}
-  spawnDelay: 5
-  onlyOneAtOnce: 0
-  preventDuplicateType: 1
+  itemPrefabs: []
+  spawnItem: 5
+  respawnItem: 3
