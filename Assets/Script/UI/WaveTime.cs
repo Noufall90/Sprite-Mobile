@@ -9,10 +9,13 @@ public class WaveTime : MonoBehaviour
     [Header("Wave Settings")]
     public float timeWave;
     public float timeAddWave;
+    [Tooltip("Batas wave untuk penambahan waktu. Wave di atas ini menggunakan durasi sama dengan wave terakhir yang dibatasi.")]
+    public int maxAddWave = 3;
+
     private float timeRemaining = 0f;
     private bool isCountingDown = false;
     private bool isGameplayTimer = false;
-    private bool prepStarted = false; // Mencegah false positive pada IsPrepFinished()
+    private bool prepStarted = false;
 
     private void Start()
     {
@@ -20,18 +23,30 @@ public class WaveTime : MonoBehaviour
         isCountingDown = false;
         prepStarted = false;
         UpdateUI();
-        Debug.Log($"[WaveTime] Start — timeWave: {timeWave}, timeAddWave: {timeAddWave}");
+        Debug.Log($"[WaveTime] Start — timeWave: {timeWave}, timeAddWave: {timeAddWave}, maxAddWave: {maxAddWave}");
     }
 
-    // Start the gameplay timer for the given wave number
-    public void StartGameplayTimer(int waveNumber = 1)
+    /// <summary>
+    /// Memulai gameplay timer.
+    /// waveNumber dimulai dari 0 (wave pertama = 0, kedua = 1, dst.)
+    ///
+    /// Durasi tiap wave:
+    ///   wave 0 → timeWave + 0 * timeAddWave
+    ///   wave 1 → timeWave + 1 * timeAddWave
+    ///   wave 2 → timeWave + 2 * timeAddWave
+    ///   wave 3+ → timeWave + maxAddWave * timeAddWave  (dibatasi)
+    /// </summary>
+    public void StartGameplayTimer(int waveNumber = 0)
     {
-        float duration = timeWave + Mathf.Max(0, waveNumber - 1) * timeAddWave;
-        Debug.Log($"[WaveTime] StartGameplayTimer wave {waveNumber} — durasi: {duration}s");
+        // Clamp agar penambahan waktu tidak melebihi batas maxAddWave wave
+        int clampedWave = Mathf.Clamp(waveNumber, 0, maxAddWave);
+        float duration  = timeWave + clampedWave * timeAddWave;
+
+        Debug.Log($"[WaveTime] StartGameplayTimer wave {waveNumber} (clamped: {clampedWave}) — durasi: {duration}s");
         SetTime(duration, true);
     }
 
-    // Start a preparation / countdown timer before the wave begins
+    // Memulai timer persiapan sebelum wave dimulai
     public void StartPrep(float duration)
     {
         Debug.Log($"[WaveTime] StartPrep — durasi: {duration}s");
@@ -41,8 +56,8 @@ public class WaveTime : MonoBehaviour
 
     private void SetTime(float duration, bool gameplay)
     {
-        timeRemaining = Mathf.Max(0f, duration);
-        isCountingDown = (timeRemaining > 0f); // hanya countdown jika ada waktu
+        timeRemaining  = Mathf.Max(0f, duration);
+        isCountingDown = (timeRemaining > 0f);
         isGameplayTimer = gameplay;
         UpdateUI();
     }
@@ -55,7 +70,7 @@ public class WaveTime : MonoBehaviour
         timeRemaining -= Time.deltaTime;
         if (timeRemaining < 0f)
         {
-            timeRemaining = 0f;
+            timeRemaining  = 0f;
             isCountingDown = false;
         }
 
@@ -72,14 +87,13 @@ public class WaveTime : MonoBehaviour
         }
     }
 
-    // Returns true only when the gameplay timer has finished
+    // Mengembalikan true hanya saat gameplay timer habis
     public bool IsGameplayTimeUp()
     {
         return isGameplayTimer && !isCountingDown && timeRemaining <= 0f;
     }
 
-    // Returns true when a preparation/countdown timer has finished.
-    // Membutuhkan prepStarted = true agar tidak false-positive di initial state.
+    // Mengembalikan true saat prep timer selesai (butuh prepStarted = true)
     public bool IsPrepFinished()
     {
         return prepStarted && !isGameplayTimer && !isCountingDown && timeRemaining <= 0f;
@@ -89,18 +103,17 @@ public class WaveTime : MonoBehaviour
 
     public void StopTimer()
     {
-        timeRemaining = 0f;
+        timeRemaining  = 0f;
         isCountingDown = false;
         UpdateUI();
     }
 
-    // Explicitly set timer to zero and clear state (used when showing results)
     public void SetTimeZero()
     {
-        timeRemaining = 0f;
-        isCountingDown = false;
+        timeRemaining   = 0f;
+        isCountingDown  = false;
         isGameplayTimer = false;
-        prepStarted = false;
+        prepStarted     = false;
         UpdateUI();
     }
 }

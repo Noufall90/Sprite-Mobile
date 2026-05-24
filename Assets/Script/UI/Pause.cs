@@ -46,6 +46,9 @@ public class Pause : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(mainMenuSceneName);
+        if (TransitionManager.Instance != null)
+            TransitionManager.Instance.LoadScene(mainMenuSceneName);
+        else
+            SceneManager.LoadScene(mainMenuSceneName);
     }
 }

@@ -22,8 +22,12 @@ public class SwirlController : MonoBehaviour
     [Header("Rotation")]
     [SerializeField] private float rotationSpeed = 180f; // derajat per detik
 
+    [Header("Audio")]
+    [SerializeField] private float soundLoopInterval = 0.5f; // Jeda antar suara saat looping
+
     private Transform playerTransform;
     private Coroutine durationCoroutine;
+    private Coroutine soundCoroutine;
 
     // ── Dipanggil oleh SwirlItem saat di-pickup ─────────────────
 
@@ -37,11 +41,23 @@ public class SwirlController : MonoBehaviour
         // Langsung posisikan ke player
         transform.position = playerTransform.position;
 
-        // Hentikan timer sebelumnya (jika ada pick-up ganda)
-        if (durationCoroutine != null)
-            StopCoroutine(durationCoroutine);
+        // Hentikan timer & sound sebelumnya (jika ada pick-up ganda)
+        if (durationCoroutine != null) StopCoroutine(durationCoroutine);
+        if (soundCoroutine != null) StopCoroutine(soundCoroutine);
 
         durationCoroutine = StartCoroutine(DeactivateAfter(duration));
+        soundCoroutine = StartCoroutine(SoundLoop());
+    }
+
+    private IEnumerator SoundLoop()
+    {
+        while (true)
+        {
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySound2D("Shiruken");
+            
+            yield return new WaitForSeconds(soundLoopInterval);
+        }
     }
 
     // ── Lifecycle ────────────────────────────────────────────────
@@ -62,6 +78,12 @@ public class SwirlController : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         // Nonaktifkan kembali setelah durasi habis
+        if (soundCoroutine != null)
+        {
+            StopCoroutine(soundCoroutine);
+            soundCoroutine = null;
+        }
+
         durationCoroutine = null;
         gameObject.SetActive(false);
     }

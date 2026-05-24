@@ -199,6 +199,9 @@ MonoBehaviour:
   - groupID: Button
     clips:
     - {fileID: 8300000, guid: c5f0d1266301c8f40973a8edd7767d3c, type: 3}
+  - groupID: Shiruken
+    clips:
+    - {fileID: 8300000, guid: 9a01e321569429d45886d768d7b7d26a, type: 3}
 --- !u!114 &498411239008388306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,10 +229,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tracks:
-  - trackName: Level_1
-    clip: {fileID: 8300000, guid: 81b2587d551696242b3f55fee5cdf8c8, type: 3}
   - trackName: MainMenu
     clip: {fileID: 8300000, guid: 07f3201a78672434995668b4432f4d6f, type: 3}
+  - trackName: Level_1
+    clip: {fileID: 8300000, guid: 81b2587d551696242b3f55fee5cdf8c8, type: 3}
+  - trackName: Level_2
+    clip: {fileID: 8300000, guid: c7b4d239af963434da2e6ffcebdd3db6, type: 3}
+  - trackName: Level_3
+    clip: {fileID: 8300000, guid: 6528e16d74aaa6c47a96ef10ca5a3661, type: 3}
 --- !u!114 &1572017121603954050
 MonoBehaviour:
   m_ObjectHideFlags: 0

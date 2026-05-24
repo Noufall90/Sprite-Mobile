@@ -7,6 +7,7 @@ public class WaveManager : MonoBehaviour
 {
     [Header("Wave Settings")]
     [SerializeField] private int currentWave = 0;
+    [SerializeField] private int maxWave = 0;
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private float resultShowDelay = 1.5f;
     [SerializeField] private float prepDuration;
@@ -15,7 +16,11 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private WaveSpawn waveSpawn;
     [SerializeField] private WaveTime waveTime;
     [SerializeField] private WaveUI waveUI;
-    [SerializeField] private TransitionManager transitionManager;
+    [SerializeField] private LevelUI levelUI;
+
+    // Property publik untuk dibaca WaveUI dan LevelUI
+    public int MaxWave => maxWave;
+    public int CurrentWave => currentWave;
 
     private int waveScore = 0;
     private int highestScore = 0;
@@ -39,13 +44,11 @@ public class WaveManager : MonoBehaviour
         if (waveSpawn == null) waveSpawn = FindObjectOfType<WaveSpawn>();
         if (waveTime == null) waveTime = FindObjectOfType<WaveTime>();
         if (waveUI == null) waveUI = FindObjectOfType<WaveUI>();
-        if (transitionManager == null) transitionManager = FindObjectOfType<TransitionManager>();
 
         // === DEBUG: Cek semua referensi ===
         Debug.Log($"[WaveManager] Awake — waveSpawn: {(waveSpawn != null ? waveSpawn.name : "NULL")}");
         Debug.Log($"[WaveManager] Awake — waveTime:  {(waveTime != null ? waveTime.name : "NULL")}");
         Debug.Log($"[WaveManager] Awake — waveUI:    {(waveUI != null ? waveUI.name : "NULL")}");
-        Debug.Log($"[WaveManager] Awake — transitionManager: {(transitionManager != null ? transitionManager.name : "NULL")}");
 
         if (waveSpawn == null)
             Debug.LogError("[WaveManager] waveSpawn TIDAK DITEMUKAN! Assign di Inspector atau pastikan ada WaveSpawn di scene.");
@@ -183,9 +186,28 @@ public class WaveManager : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        if (waveUI != null)
+        bool allWavesDone = maxWave > 0 && currentWave >= maxWave;
+
+        if (allWavesDone)
         {
-            waveUI.ShowResults(currentWave - 1, waveScore, highestScore);
+            // Semua wave selesai — tampilkan Level Complete UI
+            if (levelUI != null)
+            {
+                levelUI.ShowLevelResults(waveScore, highestScore);
+            }
+            else if (waveUI != null)
+            {
+                // Fallback jika LevelUI belum di-assign
+                waveUI.ShowResults(currentWave - 1, waveScore, highestScore);
+            }
+        }
+        else
+        {
+            // Masih ada wave berikutnya — tampilkan hasil wave biasa
+            if (waveUI != null)
+            {
+                waveUI.ShowResults(currentWave - 1, waveScore, highestScore);
+            }
         }
     }
 
@@ -211,14 +233,20 @@ public class WaveManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (TransitionManager.Instance != null)
+            TransitionManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene("MainMenu");
+        if (TransitionManager.Instance != null)
+            TransitionManager.Instance.LoadScene("MainMenu");
+        else
+            SceneManager.LoadScene("MainMenu");
     }
 
     public void AddWaveScore(int points)

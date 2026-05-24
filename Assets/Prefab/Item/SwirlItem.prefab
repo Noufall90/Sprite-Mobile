@@ -181,10 +181,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f00afb09d4217e40a7f3efac268253b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swirlTime: 5
-  swirlRate: 5
-  swirlCount: 8
-  swirlRadius: 1.5
-  swirlDamage: 10
-  swirldObject: {fileID: 0}
+  swirlTime: 10
   playerTag: Player

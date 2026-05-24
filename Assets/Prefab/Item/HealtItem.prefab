@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c89173424ba1a843bbf203fb61fd1f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healAmount: 10
+  healAmount: 30
   playerTag: Player
 --- !u!1 &6162326290246558205
 GameObject:

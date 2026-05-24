@@ -13,15 +13,29 @@ public class BulletEnemy : MonoBehaviour
 
     private void Awake()
     {
-        Collider2D col =
-            GetComponent<Collider2D>();
-
-        col.isTrigger = false;
+        Collider2D col = GetComponent<Collider2D>();
+        
+        if (col != null)
+        {
+            col.isTrigger = false;
+        }
+        else
+        {
+            Debug.LogWarning($"BulletEnemy missing Collider2D: {gameObject.name}");
+        }
     }
 
     private void Start()
     {
-        Destroy(gameObject, lifeTime);
+        if (lifeTime > 0f)
+        {
+            Destroy(gameObject, lifeTime);
+        }
+        else if (lifeTime == 0f)
+        {
+            // Jika lifetime 0, destroy segera
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

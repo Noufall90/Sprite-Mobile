@@ -16,12 +16,17 @@ public class WaveUI : MonoBehaviour
 
     private WaveManager waveManager;
     private int currentScore = 0;
+    private int maxWave = 0;
 
     private void Start()
     {
         Instance = this;
 
         waveManager = FindObjectOfType<WaveManager>();
+
+        // Ambil maxWave dari WaveManager untuk ditampilkan di UI
+        if (waveManager != null)
+            maxWave = waveManager.MaxWave;
 
         if (resultsPanel != null)
         {
@@ -88,11 +93,12 @@ public class WaveUI : MonoBehaviour
     private void OnWaveStart(int waveNumber)
     {
         currentScore = 0;
-        
+
         if (currentWave != null)
         {
-            // waveNumber dimulai dari 0 di code, jadi +1 untuk UI
-            currentWave.text = $"Wave  {waveNumber}";
+            // waveNumber dimulai dari 0, tampilkan +1 untuk UI (Wave 1, 2, 3...)
+            string maxStr = maxWave > 0 ? maxWave.ToString() : "?";
+            currentWave.text = $"Wave {waveNumber + 1} / {maxStr}";
         }
 
         UpdateScoreUI();

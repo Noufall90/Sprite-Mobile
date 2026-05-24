@@ -276,5 +276,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 3
-  lifeTime: 3
+  lifeTime: 5
   destroyOnHit: 1

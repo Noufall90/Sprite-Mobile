@@ -8,7 +8,14 @@ public class Bullet : MonoBehaviour
     private void Start()
     {
         if (lifeTime > 0f)
+        {
             Destroy(gameObject, lifeTime);
+        }
+        else if (lifeTime == 0f)
+        {
+            // Jika lifetime 0, destroy segera
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
