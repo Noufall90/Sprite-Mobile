@@ -9,7 +9,6 @@ public class HealthItem : MonoBehaviour
 
     private void Reset()
     {
-        // Ensure collider is set as trigger by default when added
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
         {
@@ -19,15 +18,22 @@ public class HealthItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        SoundManager.Instance.PlaySound2D("PickUpHealthItem");
         if (!other.CompareTag(playerTag))
             return;
 
         HealthPlayer hp = other.GetComponent<HealthPlayer>();
+
         if (hp != null)
         {
             hp.Heal(healAmount);
+
+            // Play pickup sound
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySound2D("PickUpItem");
+            }
+
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
 }

@@ -40,10 +40,22 @@ public class WaveManager : MonoBehaviour
         if (waveTime == null) waveTime = FindObjectOfType<WaveTime>();
         if (waveUI == null) waveUI = FindObjectOfType<WaveUI>();
         if (transitionManager == null) transitionManager = FindObjectOfType<TransitionManager>();
+
+        // === DEBUG: Cek semua referensi ===
+        Debug.Log($"[WaveManager] Awake — waveSpawn: {(waveSpawn != null ? waveSpawn.name : "NULL")}");
+        Debug.Log($"[WaveManager] Awake — waveTime:  {(waveTime != null ? waveTime.name : "NULL")}");
+        Debug.Log($"[WaveManager] Awake — waveUI:    {(waveUI != null ? waveUI.name : "NULL")}");
+        Debug.Log($"[WaveManager] Awake — transitionManager: {(transitionManager != null ? transitionManager.name : "NULL")}");
+
+        if (waveSpawn == null)
+            Debug.LogError("[WaveManager] waveSpawn TIDAK DITEMUKAN! Assign di Inspector atau pastikan ada WaveSpawn di scene.");
+        if (waveTime == null)
+            Debug.LogError("[WaveManager] waveTime TIDAK DITEMUKAN! Assign di Inspector atau pastikan ada WaveTime di scene.");
     }
 
     private void Start()
     {
+        Debug.Log("[WaveManager] Start dipanggil — memulai wave pertama.");
         Time.timeScale = 1f;
         StartWave();
     }
@@ -61,6 +73,8 @@ public class WaveManager : MonoBehaviour
         waveHasEnded = false;
         waveScore = 0;
 
+        Debug.Log($"[WaveManager] StartWave() — wave ke-{currentWave + 1} dimulai.");
+
         if (playerSpawnPoint != null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -68,6 +82,11 @@ public class WaveManager : MonoBehaviour
             if (player != null)
             {
                 player.transform.position = playerSpawnPoint.position;
+                Debug.Log($"[WaveManager] Player direset ke spawn point: {playerSpawnPoint.position}");
+            }
+            else
+            {
+                Debug.LogWarning("[WaveManager] Tidak menemukan GameObject dengan tag 'Player'!");
             }
         }
 
@@ -76,31 +95,60 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator WaveStartSequence()
     {
+        Debug.Log($"[WaveManager] WaveStartSequence mulai — prepDuration: {prepDuration}");
+
+        // Tunggu 1 frame agar semua Start() komponen lain selesai
+        yield return null;
+
         // Preparation countdown
         if (waveTime != null)
         {
+            Debug.Log($"[WaveManager] Memulai prep timer: {prepDuration} detik.");
             waveTime.StartPrep(prepDuration);
         }
-
-        while (waveTime != null && !waveTime.IsPrepFinished())
+        else
         {
-            yield return null;
+            Debug.LogWarning("[WaveManager] waveTime null — prep timer dilewati.");
+        }
+
+        // Tunggu prep selesai — jika prepDuration = 0, langsung lanjut
+        if (waveTime != null && prepDuration > 0f)
+        {
+            Debug.Log("[WaveManager] Menunggu prep selesai...");
+            while (!waveTime.IsPrepFinished())
+            {
+                yield return null;
+            }
+            Debug.Log("[WaveManager] Prep selesai!");
         }
 
         // Activate enemy spawns
         if (waveSpawn != null)
         {
+            Debug.Log($"[WaveManager] Mengaktifkan WaveSpawn untuk wave index: {currentWave}");
             waveSpawn.ActivateWave(currentWave);
+        }
+        else
+        {
+            Debug.LogError("[WaveManager] waveSpawn NULL — enemy TIDAK akan spawn! Assign WaveSpawn di Inspector.");
         }
 
         // Start gameplay timer
         if (waveTime != null)
         {
+            Debug.Log($"[WaveManager] Memulai gameplay timer untuk wave: {currentWave}");
             waveTime.StartGameplayTimer(currentWave);
         }
+        else
+        {
+            Debug.LogError("[WaveManager] waveTime NULL — gameplay timer tidak berjalan! Wave tidak akan pernah berakhir.");
+        }
 
+        Debug.Log($"[WaveManager] OnWaveStart dipanggil untuk wave: {currentWave}");
         OnWaveStart?.Invoke(currentWave);
         currentWave++;
+
+        Debug.Log($"[WaveManager] WaveStartSequence selesai. currentWave sekarang: {currentWave}");
     }
 
     public void EndWave()

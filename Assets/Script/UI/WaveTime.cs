@@ -12,31 +12,37 @@ public class WaveTime : MonoBehaviour
     private float timeRemaining = 0f;
     private bool isCountingDown = false;
     private bool isGameplayTimer = false;
+    private bool prepStarted = false; // Mencegah false positive pada IsPrepFinished()
 
     private void Start()
     {
         timeRemaining = 0f;
         isCountingDown = false;
+        prepStarted = false;
         UpdateUI();
+        Debug.Log($"[WaveTime] Start — timeWave: {timeWave}, timeAddWave: {timeAddWave}");
     }
 
     // Start the gameplay timer for the given wave number
     public void StartGameplayTimer(int waveNumber = 1)
     {
         float duration = timeWave + Mathf.Max(0, waveNumber - 1) * timeAddWave;
+        Debug.Log($"[WaveTime] StartGameplayTimer wave {waveNumber} — durasi: {duration}s");
         SetTime(duration, true);
     }
 
     // Start a preparation / countdown timer before the wave begins
     public void StartPrep(float duration)
     {
+        Debug.Log($"[WaveTime] StartPrep — durasi: {duration}s");
+        prepStarted = true;
         SetTime(duration, false);
     }
 
     private void SetTime(float duration, bool gameplay)
     {
         timeRemaining = Mathf.Max(0f, duration);
-        isCountingDown = true;
+        isCountingDown = (timeRemaining > 0f); // hanya countdown jika ada waktu
         isGameplayTimer = gameplay;
         UpdateUI();
     }
@@ -69,13 +75,14 @@ public class WaveTime : MonoBehaviour
     // Returns true only when the gameplay timer has finished
     public bool IsGameplayTimeUp()
     {
-        return timeRemaining <= 0f && !isCountingDown && isGameplayTimer;
+        return isGameplayTimer && !isCountingDown && timeRemaining <= 0f;
     }
 
-    // Returns true when a preparation/countdown timer has finished
+    // Returns true when a preparation/countdown timer has finished.
+    // Membutuhkan prepStarted = true agar tidak false-positive di initial state.
     public bool IsPrepFinished()
     {
-        return timeRemaining <= 0f && !isCountingDown && !isGameplayTimer;
+        return prepStarted && !isGameplayTimer && !isCountingDown && timeRemaining <= 0f;
     }
 
     public float GetTimeRemaining() => timeRemaining;
@@ -93,6 +100,7 @@ public class WaveTime : MonoBehaviour
         timeRemaining = 0f;
         isCountingDown = false;
         isGameplayTimer = false;
+        prepStarted = false;
         UpdateUI();
     }
 }

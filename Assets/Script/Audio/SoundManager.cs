@@ -37,6 +37,14 @@ public class SoundManager : MonoBehaviour
  
     public void PlaySound2D(string soundName)
     {
-        sfx2DSource.PlayOneShot(sfxLibrary.GetClipFromName(soundName));
+        AudioClip clip = sfxLibrary.GetClipFromName(soundName);
+        if (clip != null)
+        {
+            sfx2DSource.PlayOneShot(clip);
+        }
+        else
+        {
+            Debug.LogWarning($"[SoundManager] Sound '{soundName}' tidak ditemukan di SoundLibrary.");
+        }
     }
 }

@@ -1,17 +1,17 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 
 public class WaveUI : MonoBehaviour
 {
     public static WaveUI Instance { get; private set; }
+
     [Header("UI Elements")]
     [SerializeField] private GameObject resultsPanel;
     [SerializeField] private TMP_Text waveNumberText;
     [SerializeField] private TMP_Text waveScoreText;
     [SerializeField] private TMP_Text highestScoreText;
-    [SerializeField] private Button nextWaveButton;
-    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private TMP_Text currentWave;
+
     public TMP_Text waveScroreGame; // live score display during gameplay
 
     private WaveManager waveManager;
@@ -20,21 +20,12 @@ public class WaveUI : MonoBehaviour
     private void Start()
     {
         Instance = this;
+
         waveManager = FindObjectOfType<WaveManager>();
 
         if (resultsPanel != null)
         {
             resultsPanel.SetActive(false);
-        }
-
-        if (nextWaveButton != null)
-        {
-            nextWaveButton.onClick.AddListener(OnNextWaveClicked);
-        }
-
-        if (mainMenuButton != null)
-        {
-            mainMenuButton.onClick.AddListener(OnMainMenuClicked);
         }
 
         // Subscribe to events to track live scoring
@@ -59,8 +50,7 @@ public class WaveUI : MonoBehaviour
             resultsPanel.SetActive(true);
         }
 
-        WaveTime waveTime =
-            FindObjectOfType<WaveTime>();
+        WaveTime waveTime = FindObjectOfType<WaveTime>();
 
         if (waveTime != null)
         {
@@ -69,30 +59,28 @@ public class WaveUI : MonoBehaviour
 
         if (waveNumberText != null)
         {
-            waveNumberText.text =
-                $"Wave {waveNumber}";
+            waveNumberText.text = $"Wave {waveNumber}";
         }
 
         if (waveScoreText != null)
         {
-            waveScoreText.text =
-                $"Wave Score: {waveScore}";
+            waveScoreText.text = $"Wave Score: {waveScore}";
         }
 
         if (highestScoreText != null)
         {
-            highestScoreText.text =
-                $"Highest Score: {highestScore}";
+            highestScoreText.text = $"Highest Score: {highestScore}";
         }
 
-        // Synchronize with HighScoreManager (source of truth)
+        // Synchronize with HighScoreManager
         if (HighScoreManager.Instance != null)
         {
             HighScoreManager.Instance.TrySetNewHighScore(highestScore);
-            // Ensure displayed value reflects the manager's stored value
+
             if (highestScoreText != null)
             {
-                highestScoreText.text = $"Highest Score: {HighScoreManager.Instance.HighestScore}";
+                highestScoreText.text =
+                    $"Highest Score: {HighScoreManager.Instance.HighestScore}";
             }
         }
     }
@@ -100,12 +88,20 @@ public class WaveUI : MonoBehaviour
     private void OnWaveStart(int waveNumber)
     {
         currentScore = 0;
+        
+        if (currentWave != null)
+        {
+            // waveNumber dimulai dari 0 di code, jadi +1 untuk UI
+            currentWave.text = $"Wave  {waveNumber}";
+        }
+
         UpdateScoreUI();
     }
 
     private void OnEnemyKilled(int points)
     {
         currentScore += points;
+
         UpdateScoreUI();
 
         if (waveManager != null)
@@ -127,8 +123,14 @@ public class WaveUI : MonoBehaviour
         return resultsPanel != null && resultsPanel.activeSelf;
     }
 
-    public void OnNextWaveClicked()
+    // Assign dari Button OnClick Inspector
+    public void NextWave()
     {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound2D("Button");
+        }
+
         if (resultsPanel != null)
         {
             resultsPanel.SetActive(false);
@@ -140,8 +142,14 @@ public class WaveUI : MonoBehaviour
         }
     }
 
-    public void OnMainMenuClicked()
+    // Assign dari Button OnClick Inspector
+    public void MainMenu()
     {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound2D("Button");
+        }
+
         if (waveManager != null)
         {
             waveManager.GoToMainMenu();

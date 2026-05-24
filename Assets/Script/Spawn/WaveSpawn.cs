@@ -8,16 +8,20 @@ public class WaveSpawn : MonoBehaviour
 
     [SerializeField] private bool activateSequentially = true;
 
-    private void Start()
+    // Gunakan Awake (bukan Start) agar tidak terjadi race condition
+    // dengan WaveManager yang bisa mengaktifkan spawn via ActivateWave()
+    // sebelum Start() dijalankan.
+    private void Awake()
     {
         DeactivateAllSpawns();
+        Debug.Log($"[WaveSpawn] Awake — semua spawn dimatikan. Total: {(spawnPoints != null ? spawnPoints.Length : 0)}");
     }
 
     public void ActivateWave(int waveIndex)
     {
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
-            Debug.LogWarning("WaveSpawn: Spawn point kosong!");
+            Debug.LogError("[WaveSpawn] spawnPoints kosong atau null! Assign di Inspector.");
             return;
         }
 
@@ -38,7 +42,7 @@ public class WaveSpawn : MonoBehaviour
                     spawnPoints[i].SetActive(true);
             }
 
-            Debug.Log($"Wave {waveIndex}: spawn aktif 0 s/d {upTo}");
+            Debug.Log($"[WaveSpawn] Wave {waveIndex}: spawn aktif 0 s/d {upTo} (dari {spawnPoints.Length} total)");
         }
         else
         {
@@ -46,11 +50,14 @@ public class WaveSpawn : MonoBehaviour
             {
                 if (sp != null) sp.SetActive(true);
             }
+
+            Debug.Log($"[WaveSpawn] Wave {waveIndex}: semua {spawnPoints.Length} spawn diaktifkan.");
         }
     }
 
     public void DeactivateAllSpawns()
     {
+        if (spawnPoints == null) return;
         foreach (GameObject sp in spawnPoints)
         {
             if (sp != null) sp.SetActive(false);

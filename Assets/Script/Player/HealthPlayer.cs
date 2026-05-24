@@ -30,6 +30,9 @@ public class HealthPlayer : MonoBehaviour
     {
         if (isDead) return;
 
+        // Abaikan semua damage saat DefenseItem aktif
+        if (DefenseItem.IsDefenseActive) return;
+
         currentHealth -= damage;
 
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
