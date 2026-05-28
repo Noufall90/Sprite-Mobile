@@ -67,6 +67,13 @@ public class HealthPlayer : MonoBehaviour
     private void Die()
     {
         isDead = true;
+
+        // Simpan progress: scene ini tetap terbuka di Main Menu
+        if (GameManagerPlayer.Instance != null)
+        {
+            GameManagerPlayer.Instance.OnPlayerDied();
+        }
+
         if (deathCoroutine != null)
         {
             StopCoroutine(deathCoroutine);
@@ -85,6 +92,12 @@ public class HealthPlayer : MonoBehaviour
         }
 
         deathUI.SetActive(true);
+
+        // Tampilkan highest score di death pop-up
+        if (WaveUI.Instance != null)
+        {
+            WaveUI.Instance.ShowDeathScore();
+        }
 
         var t = deathUI.transform;
         t.localScale = Vector3.zero;

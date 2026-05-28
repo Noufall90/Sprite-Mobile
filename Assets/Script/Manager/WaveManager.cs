@@ -22,9 +22,13 @@ public class WaveManager : MonoBehaviour
     public int MaxWave => maxWave;
     public int CurrentWave => currentWave;
 
-    private int waveScore = 0;
+    private int waveScore = 0;        // Skor wave saat ini (reset tiap wave)
+    private int totalLevelScore = 0;  // Skor akumulasi seluruh wave dalam 1 level
     private int highestScore = 0;
     private bool waveHasEnded = false;
+
+    /// <summary>Total skor yang terakumulasi sejak level dimulai (tidak reset per wave).</summary>
+    public int TotalLevelScore => totalLevelScore;
 
     public static Action<int> OnWaveStart;
     public static Action OnWaveEnd;
@@ -75,6 +79,7 @@ public class WaveManager : MonoBehaviour
     {
         waveHasEnded = false;
         waveScore = 0;
+        // totalLevelScore TIDAK direset — terus terakumulasi sepanjang level
 
         Debug.Log($"[WaveManager] StartWave() — wave ke-{currentWave + 1} dimulai.");
 
@@ -160,15 +165,15 @@ public class WaveManager : MonoBehaviour
 
         waveHasEnded = true;
 
-        // Update highest score via HighScoreManager
+        // Highest score dibandingkan berdasarkan TOTAL skor level, bukan per-wave
         if (HighScoreManager.Instance != null)
         {
-            HighScoreManager.Instance.TrySetNewHighScore(waveScore);
+            HighScoreManager.Instance.TrySetNewHighScore(totalLevelScore);
             highestScore = HighScoreManager.Instance.HighestScore;
         }
-        else if (waveScore > highestScore)
+        else if (totalLevelScore > highestScore)
         {
-            highestScore = waveScore;
+            highestScore = totalLevelScore;
             PlayerPrefs.SetInt("HighestScore", highestScore);
             PlayerPrefs.Save();
         }
@@ -191,22 +196,22 @@ public class WaveManager : MonoBehaviour
         if (allWavesDone)
         {
             // Semua wave selesai — tampilkan Level Complete UI
+            // Kirim totalLevelScore sebagai skor level keseluruhan
             if (levelUI != null)
             {
-                levelUI.ShowLevelResults(waveScore, highestScore);
+                levelUI.ShowLevelResults(totalLevelScore, highestScore);
             }
             else if (waveUI != null)
             {
-                // Fallback jika LevelUI belum di-assign
-                waveUI.ShowResults(currentWave - 1, waveScore, highestScore);
+                waveUI.ShowResults(currentWave - 1, waveScore, totalLevelScore, highestScore);
             }
         }
         else
         {
-            // Masih ada wave berikutnya — tampilkan hasil wave biasa
+            // Masih ada wave berikutnya — tampilkan hasil wave + total level sejauh ini
             if (waveUI != null)
             {
-                waveUI.ShowResults(currentWave - 1, waveScore, highestScore);
+                waveUI.ShowResults(currentWave - 1, waveScore, totalLevelScore, highestScore);
             }
         }
     }
@@ -251,6 +256,7 @@ public class WaveManager : MonoBehaviour
 
     public void AddWaveScore(int points)
     {
-        waveScore += points;
+        waveScore       += points; // Skor wave ini
+        totalLevelScore += points; // Skor total level (terakumulasi)
     }
 }

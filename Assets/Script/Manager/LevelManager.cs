@@ -10,7 +10,21 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
+        int unlockedLevel = PlayerPrefs.GetInt(GameManagerPlayer.KEY_UNLOCKED_LEVEL, 1);
+
+        // Jika player pernah mati di suatu scene, pastikan level itu masuk hitungan terbuka
+        string lastScene = PlayerPrefs.GetString(GameManagerPlayer.KEY_LAST_SCENE, "");
+        if (!string.IsNullOrEmpty(lastScene) && SceneLevelIndex.TryGetValue(lastScene, out int lastIndex))
+        {
+            int minRequired = lastIndex + 1;
+            if (unlockedLevel < minRequired)
+            {
+                unlockedLevel = minRequired;
+                // Sinkronkan kembali ke PlayerPrefs
+                PlayerPrefs.SetInt(GameManagerPlayer.KEY_UNLOCKED_LEVEL, unlockedLevel);
+                PlayerPrefs.Save();
+            }
+        }
 
         // Disable semua tombol
         for (int i = 0; i < buttons.Length; i++)
@@ -26,7 +40,19 @@ public class LevelManager : MonoBehaviour
                 buttons[i].interactable = true;
             }
         }
+
+        Debug.Log($"[LevelManager] UnlockedLevel={unlockedLevel}, LastPlayedScene='{lastScene}'");
     }
+
+    // Mapping nama scene → indeks tombol (harus sinkron dengan GameManagerPlayer)
+    private static readonly System.Collections.Generic.Dictionary<string, int> SceneLevelIndex =
+        new System.Collections.Generic.Dictionary<string, int>
+        {
+            { "Level_1", 0 },
+            { "Level_2", 1 },
+            { "Level_3", 2 },
+            // Tambahkan scene lain di sini jika ada
+        };
 
     public void OpenLevel(string levelName)
     {

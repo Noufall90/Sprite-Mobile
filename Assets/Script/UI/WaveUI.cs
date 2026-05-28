@@ -8,14 +8,19 @@ public class WaveUI : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private GameObject resultsPanel;
     [SerializeField] private TMP_Text waveNumberText;
-    [SerializeField] private TMP_Text waveScoreText;
+    [SerializeField] private TMP_Text waveScoreText;       // Skor wave saat ini
+    [SerializeField] private TMP_Text totalLevelScoreText; // Skor akumulasi seluruh level
     [SerializeField] private TMP_Text highestScoreText;
     [SerializeField] private TMP_Text currentWave;
 
-    public TMP_Text waveScroreGame; // live score display during gameplay
+    [Header("Death Pop-up")]
+    [SerializeField] private TMP_Text highestScoreTextDeath;
+
+    public TMP_Text waveScroreGame; // Live total level score display saat gameplay
 
     private WaveManager waveManager;
-    private int currentScore = 0;
+    private int currentScore = 0;      // Live total level score (tidak reset per wave)
+    private int currentWaveScore = 0;  // Skor wave saat ini saja
     private int maxWave = 0;
 
     private void Start()
@@ -47,6 +52,7 @@ public class WaveUI : MonoBehaviour
     public void ShowResults(
         int waveNumber,
         int waveScore,
+        int totalLevelScore,
         int highestScore
     )
     {
@@ -67,9 +73,16 @@ public class WaveUI : MonoBehaviour
             waveNumberText.text = $"Wave {waveNumber}";
         }
 
+        // Skor wave ini
         if (waveScoreText != null)
         {
             waveScoreText.text = $"Wave Score: {waveScore}";
+        }
+
+        // Total skor seluruh level
+        if (totalLevelScoreText != null)
+        {
+            totalLevelScoreText.text = $"Level Score: {totalLevelScore}";
         }
 
         if (highestScoreText != null)
@@ -77,10 +90,10 @@ public class WaveUI : MonoBehaviour
             highestScoreText.text = $"Highest Score: {highestScore}";
         }
 
-        // Synchronize with HighScoreManager
+        // Sinkronisasi dengan HighScoreManager (gunakan totalLevelScore)
         if (HighScoreManager.Instance != null)
         {
-            HighScoreManager.Instance.TrySetNewHighScore(highestScore);
+            HighScoreManager.Instance.TrySetNewHighScore(totalLevelScore);
 
             if (highestScoreText != null)
             {
@@ -92,11 +105,11 @@ public class WaveUI : MonoBehaviour
 
     private void OnWaveStart(int waveNumber)
     {
-        currentScore = 0;
+        // currentScore (total level) TIDAK direset — terus akumulasi
+        currentWaveScore = 0;
 
         if (currentWave != null)
         {
-            // waveNumber dimulai dari 0, tampilkan +1 untuk UI (Wave 1, 2, 3...)
             string maxStr = maxWave > 0 ? maxWave.ToString() : "?";
             currentWave.text = $"Wave {waveNumber + 1} / {maxStr}";
         }
@@ -106,7 +119,8 @@ public class WaveUI : MonoBehaviour
 
     private void OnEnemyKilled(int points)
     {
-        currentScore += points;
+        currentScore      += points; // Total level
+        currentWaveScore  += points; // Wave ini saja
 
         UpdateScoreUI();
 
@@ -118,6 +132,7 @@ public class WaveUI : MonoBehaviour
 
     private void UpdateScoreUI()
     {
+        // waveScroreGame menampilkan total skor level (terakumulasi)
         if (waveScroreGame != null)
         {
             waveScroreGame.text = currentScore.ToString();
@@ -127,6 +142,21 @@ public class WaveUI : MonoBehaviour
     public bool IsResultsVisible()
     {
         return resultsPanel != null && resultsPanel.activeSelf;
+    }
+
+    /// <summary>
+    /// Dipanggil oleh HealthPlayer saat player mati.
+    /// Menampilkan highest score pada death pop-up.
+    /// </summary>
+    public void ShowDeathScore()
+    {
+        if (highestScoreTextDeath == null) return;
+
+        int hs = HighScoreManager.Instance != null
+            ? HighScoreManager.Instance.HighestScore
+            : PlayerPrefs.GetInt("HighestScore", 0);
+
+        highestScoreTextDeath.text = $"Highest Score: {hs}";
     }
 
     // Assign dari Button OnClick Inspector
