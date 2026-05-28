@@ -30,16 +30,6 @@ Players must survive endless waves of enemies with increasing difficulty while u
 
 ---
 
-# Unity Version
-
-- Unity 2022
-
-Recommended:
-
-```txt
-Unity 2022.3.x LTS
-```
-
 ---
 
 # How to Open the Project
@@ -108,12 +98,8 @@ You can also test the game directly in Unity using the Play button.
 
 # APK Download
 
-Add your APK download link here.
-
-Example:
-
 ```txt
-https://drive.google.com/your-apk-link
+https://drive.google.com/drive/folders/1Jv2ejfyp9CVekqz4crUbkWuUCy59Ifnm?usp=drive_link
 ```
 
 ---
@@ -122,12 +108,8 @@ https://drive.google.com/your-apk-link
 
 Naufal Andrian
 
-Portfolio:
-
-- https://naufalandrian.vercel.app/
-
 Itch.io:
 
-- https://qopal99.itch.io/
+https://nopallo.itch.io/sprite-clone
 
 ---
